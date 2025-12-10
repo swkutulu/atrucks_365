@@ -1,0 +1,21 @@
+.layout-default {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: stretch;
+}
+
+.layout-simple {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: stretch;
+}
+
+.layout-children {
+    display: flex;
+    flex-direction: column;
+    // justify-content: center;
+    flex: 1 1 auto;
+    padding: 1.2rem;
+}

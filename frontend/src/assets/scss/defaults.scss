@@ -1,0 +1,17 @@
+@layer base {
+    h1, h2, h3, h4, h5, h6{
+        font-size: revert;
+        font-style: revert;
+        font-weight: revert;
+    }
+
+    a{
+        color: var(--color-stone-900);
+        text-decoration-color: var( --color-stone-500);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        &:hover{
+            color: var(--color-teal-500);
+        }
+    }
+}

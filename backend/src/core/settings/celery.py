@@ -26,6 +26,7 @@ elif BROKER == 'redis':
 CELERY_BEAT_SCHEDULE = {
     'download-files-task': {
         'task': 'abcdef.tasks.download_files_task',
+        # 'args': ('0',),
         'schedule': crontab(hour='1'),
         # 'schedule': crontab(minute='*/5'),
     },

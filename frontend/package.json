@@ -1,0 +1,57 @@
+{
+    "name": "atrucks-ts",
+    "private": true,
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "lint": "eslint .",
+        "preview": "vite preview",
+        "prettier:check": "prettier --check \"./**/*.{tsx,jsx,ts,js,vue}\"",
+        "prettier:fix": "prettier --write \"./**/*.{tsx,jsx,ts,js,vue}\"",
+        "eslint:check": "eslint \"./**/*.{tsx,jsx,ts,js,vue}\"",
+        "eslint:fix": "eslint --fix \"./**/*.{tsx,jsx,ts,js,vue}\""
+    },
+    "dependencies": {
+        "@reduxjs/toolkit": "^2.9.2",
+        "js-cookie": "^3.0.5",
+        "moment": "^2.30.1",
+        "node-sass": "^9.0.0",
+        "primeicons": "^7.0.0",
+        "primereact": "^10.9.7",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "react-redux": "^9.2.0",
+        "react-router-dom": "^7.9.5",
+        "redux": "^5.0.1",
+        "sass-embedded": "^1.93.3",
+        "uuid": "^13.0.0",
+        "valibot": "^1.1.0"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.36.0",
+        "@tailwindcss/vite": "^4.1.16",
+        "@types/js-cookie": "^3.0.6",
+        "@types/node": "^24.6.0",
+        "@types/react": "^19.1.16",
+        "@types/react-dom": "^19.1.9",
+        "@types/react-redux": "^7.1.34",
+        "@types/react-router": "^5.1.20",
+        "@types/react-router-dom": "^5.3.3",
+        "@vitejs/plugin-react": "^5.0.4",
+        "eslint": "^9.36.0",
+        "eslint-plugin-react-hooks": "^5.2.0",
+        "eslint-plugin-react-refresh": "^0.4.22",
+        "globals": "^16.4.0",
+        "prettier": "^3.6.2",
+        "tailwindcss": "^4.1.16",
+        "typescript": "~5.9.3",
+        "typescript-eslint": "^8.45.0",
+        "vite": "npm:rolldown-vite@7.1.14",
+        "vite-plugin-compression": "^0.5.1"
+    },
+    "overrides": {
+        "vite": "npm:rolldown-vite@7.1.14"
+    }
+}

@@ -18,11 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 import drf_spectacular.views as views_spect
-# from abcdef import urls as abcdef_urls
+from abcdef import urls as abcdef_urls
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # path('api/v1/abcdef/', include(abcdef_urls)),
+    path('api/v1/abcdef/', include(abcdef_urls)),
 
     # swagger
     path('api/schema/',

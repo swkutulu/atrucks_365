@@ -1,0 +1,9 @@
+.is-fixed:not(:hover) {
+    .logo{
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+    .hide-fixed {
+        display: none;
+    }
+}

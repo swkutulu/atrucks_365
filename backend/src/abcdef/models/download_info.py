@@ -7,7 +7,7 @@ class DownloadInfo(models.Model):
     link = models.URLField(_('Ссылка'))
     updated_at = models.DateTimeField(_('Дата обновления'), auto_now=True)
     is_downloaded = models.BooleanField(_('Скачан'), default=False)
-    is_added = models.BooleanField(_('Добавлен'), default=False)
+    is_added = models.BooleanField(_('Дынные добавлены'), default=False)
     retry_count = models.PositiveIntegerField(_('Попыток'), default=0)
     status_message = models.TextField(_('Статус'), null=True, blank=True)
 

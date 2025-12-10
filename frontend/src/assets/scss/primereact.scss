@@ -1,0 +1,21 @@
+@layer primereact {
+    .p-icon-field-right>.p-input-icon:last-of-type {
+        .p-icon {
+            vertical-align: unset;
+        }      
+    }
+
+    .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item,
+    .p-dropdown-panel .p-dropdown-items .p-dropdown-item {
+        padding-block: 0.2rem;
+    }
+    
+    .p-tree .p-tree-container .p-treenode .p-treenode-content{
+        padding-block: 0.1rem;
+    }
+
+    .p-panel .p-panel-content,
+    .p-stepper .p-stepper-header .p-stepper-action{
+        background-color: transparent;
+    }
+}

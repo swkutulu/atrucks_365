@@ -1,0 +1,31 @@
+.status-tag {
+    & > * > * {
+        padding: 1px 5px;
+        background: inherit;
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        // color: #00000044;
+        filter: invert(1) grayscale(1);
+        -webkit-filter: invert(1) grayscale(1);
+    }
+    span + span {
+        display: none;
+    }
+}
+
+
+.payout-panel {
+    .p-panel-content {
+        border-radius: 0;
+        border: 0;
+        padding-inline: 0;
+        padding-block: 2rem;
+    }
+    .p-footer{
+
+    }
+    .p-header {
+        
+    }
+}
