@@ -1,0 +1,8 @@
+logs
+.vscode
+*.pid
+*.log
+static
+backend/src/celerybeat-schedule
+frontend/.env
+files/

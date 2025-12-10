@@ -1,0 +1,10 @@
+backend/.vscode
+backend/.venv
+backend/.pytest_cache
+backend/tests
+backend/htmlcov
+backend/.coverage
+
+**/celerybeat-schedule
+
+frontend/node_modules

@@ -1,0 +1,62 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "celery>=5.6.0",
+    "django==5.2",
+    "django-cors-headers>=4.9.0",
+    "djangorestframework>=3.16.1",
+    "drf-spectacular>=0.29.0",
+    "gunicorn>=23.0.0",
+    "pandas>=2.3.3",
+    "psycopg2>=2.9.11",
+    "redis>=7.1.0",
+    "requests>=2.32.5",
+]
+
+[dependency-groups]
+dev = [
+    "celery[pytest]>=5.6.0",
+    "ipykernel>=7.1.0",
+    "pip>=25.3",
+    "pytest>=9.0.1",
+    "pytest-cov>=7.0.0",
+    "pytest-django>=4.11.1",
+    "pytest-factoryboy>=2.8.1",
+    "pytest-mock>=3.15.1",
+]
+
+[tool.pytest.ini_options]
+# addopts = "--reuse-db --cov-config=.coveragerc --cov-report=html"
+addopts = "--reuse-db --cov=. --cov-report=html"
+pythonpath = "./src"
+DJANGO_SETTINGS_MODULE = "core.settings.test"
+python_files = "test_*.py tests.py test.py"
+django_debug_mode = true
+# markers = ["api", "units"]
+testpaths =[
+    "api",
+    "units"
+]
+filterwarnings = [
+    "ignore:'index_together' is deprecated.",
+    "ignore::DeprecationWarning",
+]
+
+[tool.coverage.run]
+omit = [
+    "*/tests/*",
+    "__init__.py",
+    "*/factories_*.py",
+    "*conftest.py",
+    "*/apps/*",
+    "*/migrations/*",
+    "*/settings/*",
+    "*/urls.py",
+    "*/wsgi.py",
+    "*./asgi.py",
+    "manage.py",
+]

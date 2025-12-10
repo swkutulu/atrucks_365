@@ -1,0 +1,8 @@
+proxy_buffering         on;
+proxy_buffers           512 512k;
+proxy_redirect          off;
+proxy_set_header        Host $http_host;
+proxy_set_header        X-Real-IP $remote_addr;
+proxy_set_header        X-Real-Host $http_host;
+proxy_set_header        X-Real-Port $server_port;
+proxy_set_header        X-Forwarded-For $http_host;
