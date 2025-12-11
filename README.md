@@ -6,7 +6,7 @@ redis, uv, python3.12, yarn, node==22, postgres - вроде все
 
 ##### back, в папке backend 
 > uv sync
-> uv run src/manage.py 9200
+> uv run src/manage.py runserver 9200
 
 ##### celery, в папке backend/src
 > celery -A core worker -B --loglevel=INFO
@@ -18,11 +18,11 @@ redis, uv, python3.12, yarn, node==22, postgres - вроде все
 ##### база
 - Создаем базу atruck_swk, и пользователя. У меня настроен пользователь для соединения с БД (atruck_swk)  django/123, в файле backend/src/core/settings/local.py. Но на всякий случай я базу положил
 - в папке backend/src 
-> uv run migrate
+> uv run manage.py migrate
 
-И еще надо для тестов базу, обычно я делаю с префиксом test_. Но дял тестов я только настройки сделал.
+И еще надо для тестов базу, обычно я делаю с префиксом test_. Но для тестов я только настройки сделал.
 
-#### команды
+##### команды
 > uv run manage.py create_admin - делает юзера 	atrucks/atrucks
 > uv run manage.py force_update - если у вас все стартануло, то дергает задачу celery, на скачивание и обработку файлов. не проверил создается ли папка files сама, положил в архив поэтому.
 
