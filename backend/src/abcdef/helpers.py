@@ -163,14 +163,14 @@ def process_file(file_name, base_name) -> None:
         df_norm = pd.merge(df_norm, df_ter, how='left', on='Территория ГАР')
         df_norm['num_min'] = df_norm['АВС/ DEF'] + df_norm['От']
         df_norm['num_max'] = df_norm['АВС/ DEF'] + df_norm['До']
-        df_norm = df_norm.astype({'num_max': str, 'num_min': str})
+        # df_norm = df_norm.astype({'num_max': str, 'num_min': str})
         df_norm = df_norm['АВС/ DEF;num_min;num_max;Емкость;Оператор-ID;Территория ГАР-ID;ИНН'.split(';')]
 
         data_norm = df_norm.to_records(index=False).tolist()
         batch_update(
             table_name=abcdef_models.PhoneNorm._meta.db_table,
             data=data_norm,
-            col_keys=['num_min', 'num_max'],
+            col_keys=['num_prefix', 'num_min', 'num_max'],
             col_upd=['num_prefix', 'capacity', 'opsos_id', 'territory_id', 'inn'],
             col_names=['num_prefix', 'num_min', 'num_max', 'capacity', 'opsos_id', 'territory_id', 'inn'],
         )

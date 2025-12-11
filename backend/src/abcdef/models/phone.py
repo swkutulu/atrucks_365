@@ -23,7 +23,8 @@ class Phone(models.Model):
 
 # вариант 2
 class PhoneNorm(models.Model):
-    num_prefix = models.CharField(_('Префикс'), max_length=5, db_index=True)
+    # num_prefix = models.CharField(_('Префикс'), max_length=5)
+    num_prefix = models.IntegerField(_('Префикс'))
     num_min = models.BigIntegerField(_('Начиная с'))
     num_max = models.BigIntegerField(_('Заканчивая по'))
     capacity = models.PositiveIntegerField(_('Емкость'))
@@ -34,8 +35,7 @@ class PhoneNorm(models.Model):
     class Meta:
         verbose_name = _("Реестр нумерации (нормализованный)")
         verbose_name_plural = _("Реестр нумерации (нормализованный)")
-        unique_together = ('num_min', 'num_max')  # для пакетной вствки
-
+        unique_together = ('num_prefix', 'num_min', 'num_max')
 
 class Opsos(models.Model):
     name = models.CharField(_('Оператор'), max_length=255, unique=True)
