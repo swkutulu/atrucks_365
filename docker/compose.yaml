@@ -50,8 +50,12 @@ services:
       - ../files:/app/files
       - ../backend/src:/app/backend/src
     working_dir: /app/backend/src
-    command: bash -c "uv run gunicorn core.wsgi:application --pid ../../run/backend.pid \
-                      -b 0.0.0.0:${BACK_SERVER_PORT} --preload --threads 4 --workers 1"
+    command: bash -c "uv run manage.py migrate && \
+      uv run manage.py collectstatic --noinput && \
+      uv run manage.py create_admin && \
+      uv run manage.py force_update && \
+      uv run gunicorn core.wsgi:application --pid ../../run/backend.pid \
+        -b 0.0.0.0:${BACK_SERVER_PORT} --preload --threads 4 --workers 1"
     ports:
       - ${BACK_SERVER_PORT}:${BACK_SERVER_PORT}
     depends_on:
@@ -59,6 +63,8 @@ services:
         condition: service_healthy
         restart: true
       redis:
+        condition: service_started
+      celery:
         condition: service_started
     links:
       - redis
@@ -106,12 +112,10 @@ services:
     working_dir: /app/backend/src
     # command: bash -c "sleep infinity"
     # command: bash -c "apt update && apt install redis-tools && apt install iputils-ping && apt install nmap & sleep infinity"
-    command: bash -c "uv run celery -A core worker -B --loglevel=DEBUG && \
-                      uv run manage.py create_admin && \
-                      uv run manage.py force_update"
+    command: bash -c "uv run celery -A core worker -B --loglevel=INFO"
     depends_on:
-      back:
-        condition: service_started
+      # back:
+      #   condition: service_started
       redis:
         condition: service_started
     links:
