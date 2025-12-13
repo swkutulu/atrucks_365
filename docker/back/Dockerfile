@@ -7,13 +7,14 @@ RUN pip install uv
 
 WORKDIR /app
 RUN mkdir /app/run
+RUN mkdir /app/backend
+COPY ./backend/.python-version /app/backend
+COPY ./backend/pyproject.toml /app/backend/
+COPY ./backend/uv.lock /app/backend/
 
-COPY ./backend /app/backend
+# COPY ./backend /app/backend
 # COPY ./static /app/static
 # COPY ./backend/src /app/backend/src
-# COPY ./backend/.python-version /app/backend
-# COPY ./backend/pyproject.toml /app/backend/
-# COPY ./backend/uv.lock /app/backend/
 
 WORKDIR /app/backend
 RUN uv sync

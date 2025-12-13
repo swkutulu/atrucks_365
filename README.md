@@ -1,4 +1,17 @@
 # Установка
+
+### docker
+В папке docker
+Только при первом запуске
+> docker compose build --no-cache back
+
+Затем как всегда
+> docker compose up
+
+Какое-то время скачивание фаайлов займет
+Кода стартанет, проверять по адресу localhost:8001
+
+
 #### Зависимости
 redis, uv, python3.12, yarn, node==22, postgres - вроде все
 

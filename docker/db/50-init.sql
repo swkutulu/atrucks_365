@@ -1,0 +1,5 @@
+CREATE USER django WITH PASSWORD '123';
+
+-- CREATE DATABASE "atruck_swk" WITH TEMPLATE = template0 OWNER = django ENCODING = 'UTF8' LOCALE = 'en_US.utf8';
+
+GRANT ALL PRIVILEGES ON DATABASE "atruck_swk" TO django;

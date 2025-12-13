@@ -16,8 +16,11 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
+      # - ./db/50-init.sql:/docker-entrypoint-initdb.d/50-init.sql
+      # - ./db/60-init.sql:/docker-entrypoint-initdb.d/60-init.sql
+      - ./db/60-init.sql:/docker-entrypoint-initdb.d/60-init.sql
+      # - ./db/init.sh:/docker-entrypoint-initdb.d/70-init.sh
       - pgdata_atrucks_swk:/var/lib/postgresql/data
-      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - ${POSTGRES_PORT_EXPOSE}:5432
     healthcheck:
@@ -43,7 +46,9 @@ services:
       dockerfile: docker/back/Dockerfile
     volumes:
       - ../logs:/app/logs
-      - ../static:/app/static 
+      - ../static:/app/static
+      - ../files:/app/files
+      - ../backend/src:/app/backend/src
     working_dir: /app/backend/src
     command: bash -c "uv run gunicorn core.wsgi:application --pid ../../run/backend.pid \
                       -b 0.0.0.0:${BACK_SERVER_PORT} --preload --threads 4 --workers 1"
@@ -95,10 +100,15 @@ services:
     restart: "no"
     volumes:
       - ../logs:/app/logs
+      - ../static:/app/static
+      - ../files:/app/files
+      - ../backend/src:/app/backend/src
     working_dir: /app/backend/src
     # command: bash -c "sleep infinity"
     # command: bash -c "apt update && apt install redis-tools && apt install iputils-ping && apt install nmap & sleep infinity"
-    command: bash -c "uv run celery -A core worker -B --loglevel=DEBUG"
+    command: bash -c "uv run celery -A core worker -B --loglevel=DEBUG && \
+                      uv run manage.py create_admin && \
+                      uv run manage.py force_update"
     depends_on:
       back:
         condition: service_started
