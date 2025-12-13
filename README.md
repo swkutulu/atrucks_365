@@ -6,16 +6,19 @@
 
 Только при первом запуске, потому что два контейнера на одном образе билдим его первым.
 
-> docker compose build --no-cache back
+>
+    docker compose build --no-cache back
 
 Затем как всегда
-> docker compose up
+>
+    docker compose up
 
 Какое-то время скачивание файлов займет. В папке files должны появиться.
 Кода стартанет, проверять по адресам
-- localhost:8001
-- localhost:8001/admin/
-- localhost:8001/api/schema/swagger-ui/#/
+>
+    localhost:8001
+    localhost:8001/admin/
+    localhost:8001/api/schema/swagger-ui/#/
 
 admin user: atrucks/atrucks 
 Info доступно только при авторизации в админе
