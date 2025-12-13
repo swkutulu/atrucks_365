@@ -2,7 +2,7 @@ logs
 .vscode
 *.pid
 *.log
-static
+#static
 backend/src/celerybeat-schedule
 frontend/.env
-files/
+#files/
