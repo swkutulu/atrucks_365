@@ -27,5 +27,5 @@ def download_files_task(self, try_count=0):
 @app.task(bind=True)
 def process_file_task(self, file_name, base_name):
     logger.info(f">> Process file task {base_name} started ...")
-    helpers.process_file(file_name, base_name)
+    helpers.process_file_sql(file_name, base_name)
     logger.info(f"<< Process file task {base_name} finished ...")

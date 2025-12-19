@@ -1,5 +1,7 @@
 import logging
 import os
+import csv
+import io
 import requests
 import pandas as pd
 import traceback
@@ -8,6 +10,7 @@ from django.conf import settings
 from django.db import connections, transaction
 from psycopg2.extras import execute_values
 from abcdef import models as abcdef_models
+from memory_profiler import profile
 
 
 logger = logging.getLogger('celery')
@@ -114,11 +117,12 @@ def batch_update(table_name: str,
             execute_values(cursor, tmpl, data)
 
 
-def process_files_all() -> None:
+def process_files_all_pandas() -> None:
     for _, file_name, base_name in get_files(True):
         process_file(file_name, base_name)
 
 
+@profile
 def process_file(file_name, base_name) -> None:
     try:
         df = pd.read_csv(file_name, sep=';', dtype=str)
@@ -126,28 +130,30 @@ def process_file(file_name, base_name) -> None:
         df = df.set_axis('АВС/ DEF;От;До;Емкость;Оператор;Регион;Территория ГАР;ИНН'.split(';'), axis='columns')
         # АВС/ DEF;От;До;Емкость;Оператор;Регион;Территория ГАР;ИНН
 
-        data = df.to_records(index=False).tolist()
-        batch_update(
-            table_name=abcdef_models.Phone._meta.db_table,
-            data=data,
-            col_keys=['num_prefix', 'num_start', 'num_end'],
-            col_upd=['capacity', 'opsos', 'region', 'territory', 'inn'],
-            col_names=['num_prefix', 'num_start', 'num_end', 'capacity', 'opsos', 'region', 'territory', 'inn'],
-        )
+        # data = df.to_records(index=False).tolist()
+        # batch_update(
+        #     table_name=abcdef_models.Phone._meta.db_table,
+        #     data=data,
+        #     col_keys=['num_prefix', 'num_start', 'num_end'],
+        #     col_upd=['capacity', 'opsos', 'region', 'territory', 'inn'],
+        #     col_names=['num_prefix', 'num_start', 'num_end', 'capacity', 'opsos', 'region', 'territory', 'inn'],
+        # )
 
         df_opsos = df[['Оператор']].drop_duplicates()
+        data = df_opsos.to_records(index=False).tolist()
         batch_update(
             table_name=abcdef_models.Opsos._meta.db_table,
-            data=df_opsos.to_records(index=False).tolist(),
+            data=data,
             col_keys=['name'],
             col_upd=['name'],
             col_names=['name'],
         )
 
         df_ter = df[['Территория ГАР']].drop_duplicates()
+        data = df_ter.to_records(index=False).tolist()
         batch_update(
             table_name=abcdef_models.Territory._meta.db_table,
-            data=df_ter.to_records(index=False).tolist(),
+            data=data,
             col_keys=['name'],
             col_upd=['name'],
             col_names=['name'],
@@ -185,3 +191,91 @@ def process_file(file_name, base_name) -> None:
             'is_added': False,
             'status_message': traceback.format_exc(),
         })
+
+
+def create_or_truncate_tables() -> None:
+    with connections['default'].cursor() as cursor:
+        # CREATE UNLOGGED TABLE IF NOT EXISTS abcdef_phone_norm_temp (
+        cursor.execute('''
+            CREATE TEMPORARY TABLE IF NOT EXISTS abcdef_phone_norm_temp (
+                num_prefix varchar(5) NOT NULL,
+                num_start varchar(20) NOT NULL,
+                num_end varchar(20) NOT NULL,
+                capacity int4 NOT NULL,
+                opsos text NULL,
+                region text NULL,
+                territory text NULL,
+                inn varchar(20) NOT NULL,
+                opsos_id int4 NULL,
+	            territory_id int4 NULL
+            );
+        ''')
+        cursor.execute('''
+            TRUNCATE abcdef_phone_norm_temp;
+            TRUNCATE abcdef_phonenorm CASCADE;
+            TRUNCATE abcdef_territory CASCADE;
+            TRUNCATE abcdef_opsos CASCADE;
+            alter sequence if exists public.abcdef_territory_id_seq restart;
+            alter sequence if exists public.abcdef_phonenorm_id_seq restart;
+            alter sequence if exists public.abcdef_opsos_id_seq restart;
+        ''')
+
+
+def update_tables() -> None:
+    with connections['default'].cursor() as cursor:
+        cursor.execute('''
+            WITH ins AS (
+                INSERT INTO abcdef_territory(name)
+                SELECT distinct territory
+                FROM abcdef_phone_norm_temp
+                ORDER BY territory
+                returning *
+            )
+            UPDATE abcdef_phone_norm_temp SET territory_id=ins.id
+            FROM ins
+            WHERE territory=ins.name;
+        ''')
+        cursor.execute('''
+            WITH ins AS (
+                INSERT INTO abcdef_opsos(name)
+                SELECT distinct opsos
+                FROM abcdef_phone_norm_temp
+                ORDER BY opsos
+                returning *
+            )
+            UPDATE abcdef_phone_norm_temp SET opsos_id=ins.id
+            FROM ins
+            WHERE opsos=ins.name;
+        ''')
+        cursor.execute('''
+            INSERT INTO abcdef_phonenorm(
+                num_prefix, num_min, num_max, capacity, opsos_id, territory_id, inn
+            )
+            SELECT num_prefix::int, concat(num_prefix, num_start)::bigint, concat(num_prefix, num_end)::bigint, capacity, opsos_id, territory_id, inn
+            FROM abcdef_phone_norm_temp;
+        ''')
+
+
+def process_files_all_sql() -> None:
+    try:
+        with transaction.atomic():
+            create_or_truncate_tables()
+            for _, file_name, base_name in get_files(True):
+                process_file_sql(file_name, base_name)
+            update_tables()
+    except Exception:
+        logger.error(traceback.format_exc())
+        log_info(file_base_name=base_name, params={
+            'is_added': False,
+            'status_message': traceback.format_exc(),
+        })
+
+
+# @profile
+def process_file_sql(file_name, base_name) -> None:
+    sql = '''COPY abcdef_phone_norm_temp(
+        num_prefix, num_start, num_end, capacity, opsos, region, territory, inn
+    ) FROM STDIN WITH (FORMAT CSV, HEADER true, DELIMITER ";", QUOTE "#", NULL "N/A")'''
+    with open(file_name, 'r', encoding='utf-8') as f:
+        with connections['default'].cursor() as cursor:
+            cursor.copy_expert(sql, f)

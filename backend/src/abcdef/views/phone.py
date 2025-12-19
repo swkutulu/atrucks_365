@@ -15,10 +15,10 @@ class PhoneSearchView(APIView):
 
     def get(self, request, *args, **kwargs):
         qs = abcdef_models.Phone.objects.all()
-        qs = qs.annotate(
-            num_min=Cast(Concat(models.F('num_prefix'), models.F('num_start')), output_field=models.BigIntegerField()),
-            num_max=Cast(Concat(models.F('num_prefix'), models.F('num_end')), output_field=models.BigIntegerField()),
-        )
+        # qs = qs.annotate(
+        #     num_min=Cast(Concat(models.F('num_prefix'), models.F('num_start')), output_field=models.BigIntegerField()),
+        #     num_max=Cast(Concat(models.F('num_prefix'), models.F('num_end')), output_field=models.BigIntegerField()),
+        # )
         phone = int(kwargs.get('phone'))
         if phone:
             qs = qs.filter(num_min__lte=phone, num_max__gte=phone)
@@ -39,6 +39,7 @@ class PhoneNormSearchView(APIView):
             phone = int(phone)
             qs = qs.filter(num_prefix=prefix, num_min__lte=phone, num_max__gte=phone)
         if qs.count():
+            print(qs.query)
             res = abcdef_serializers.PhoneNormSerializer(qs[:settings.PAGE_SIZE], many=True).data
             return Response(res)
         return Response({'message': 'Телефон не найден'}, HTTP_404_NOT_FOUND)

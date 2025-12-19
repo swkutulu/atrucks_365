@@ -4,11 +4,12 @@ from django.utils.translation import gettext_lazy as _
 # from abcdef import validators
 
 
-# вариант 1
+# вариант 1, Тестовый, Не рабочий.
 class Phone(models.Model):
-    num_prefix = models.CharField(_('Префикс'), max_length=5)
-    num_start = models.CharField(_('Начиная с'), max_length=20)
-    num_end = models.CharField(_('Заканчивая по'), max_length=20)
+    # num_prefix = models.CharField(_('Префикс'), max_length=5)
+    num_prefix = models.IntegerField(_('Префикс'))
+    num_min = models.BigIntegerField(_('Начиная с'))
+    num_max = models.BigIntegerField(_('Заканчивая по'))
     capacity = models.PositiveIntegerField(_('Емкость'))
     opsos = models.CharField(_('Оператор'), max_length=255)
     region = models.CharField(_('Регион'), max_length=500)
@@ -18,10 +19,11 @@ class Phone(models.Model):
     class Meta:
         verbose_name = _("Реестр нумерации")
         verbose_name_plural = _("Реестр нумерации")
-        unique_together = ('num_prefix', 'num_start', 'num_end')
+        unique_together = ('num_prefix', 'num_min', 'num_max')
+        # unique_together = ('num_prefix', 'num_start', 'num_end')
 
 
-# вариант 2
+# вариант 2, Рабочий
 class PhoneNorm(models.Model):
     # num_prefix = models.CharField(_('Префикс'), max_length=5)
     num_prefix = models.IntegerField(_('Префикс'))
@@ -36,6 +38,7 @@ class PhoneNorm(models.Model):
         verbose_name = _("Реестр нумерации (нормализованный)")
         verbose_name_plural = _("Реестр нумерации (нормализованный)")
         unique_together = ('num_prefix', 'num_min', 'num_max')
+
 
 class Opsos(models.Model):
     name = models.CharField(_('Оператор'), max_length=255, unique=True)
