@@ -19,13 +19,14 @@ def download_files_task(self, try_count=0):
         logger.info(">> !Download task retry ...")
         download_files_task.delay(try_count + 1)
     else:
-        for _, file_name, base_name in helpers.get_files(True):
-            process_file_task.delay(file_name, base_name)
+        helpers.process_files_all_sql()
+        # for _, file_name, base_name in helpers.get_files(True):
+        #     process_file_task.delay(file_name, base_name)
     logger.info("<< Download task finished ...")
 
 
-@app.task(bind=True)
-def process_file_task(self, file_name, base_name):
-    logger.info(f">> Process file task {base_name} started ...")
-    helpers.process_file_sql(file_name, base_name)
-    logger.info(f"<< Process file task {base_name} finished ...")
+# @app.task(bind=True)
+# def process_file_task(self, file_name, base_name):
+#     logger.info(f">> Process file task {base_name} started ...")
+#     helpers.process_file_sql(file_name, base_name)
+#     logger.info(f"<< Process file task {base_name} finished ...")

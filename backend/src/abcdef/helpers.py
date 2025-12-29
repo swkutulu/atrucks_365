@@ -207,7 +207,7 @@ def create_or_truncate_tables() -> None:
                 territory text NULL,
                 inn varchar(20) NOT NULL,
                 opsos_id int4 NULL,
-	            territory_id int4 NULL
+                territory_id int4 NULL
             );
         ''')
         cursor.execute('''
@@ -251,7 +251,8 @@ def update_tables() -> None:
             INSERT INTO abcdef_phonenorm(
                 num_prefix, num_min, num_max, capacity, opsos_id, territory_id, inn
             )
-            SELECT num_prefix::int, concat(num_prefix, num_start)::bigint, concat(num_prefix, num_end)::bigint, capacity, opsos_id, territory_id, inn
+            SELECT num_prefix::int, concat(num_prefix, num_start)::bigint, concat(num_prefix, num_end)::bigint, 
+                       capacity, opsos_id, territory_id, inn
             FROM abcdef_phone_norm_temp;
         ''')
 
@@ -263,6 +264,10 @@ def process_files_all_sql() -> None:
             for _, file_name, base_name in get_files(True):
                 process_file_sql(file_name, base_name)
             update_tables()
+        log_info(file_base_name=base_name, params={
+            'is_added': True,
+            'status_message': '',
+        })
     except Exception:
         logger.error(traceback.format_exc())
         log_info(file_base_name=base_name, params={
